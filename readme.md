@@ -5,5 +5,5 @@
 * ./venv/bin/pip install -r requirements.txt 
 
 ## how to run:
-./run_web.sh
-./run_camera.py
+* ./run_web.sh
+* ./run_camera.py
