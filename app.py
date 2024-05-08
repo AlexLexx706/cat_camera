@@ -38,7 +38,10 @@ def generate_frames():
 
 @app.route('/')
 def index():
-    print('index')
+    return render_template('index.html')
+
+@app.route('/index.html')
+def index_2():
     return render_template('index.html')
 
 

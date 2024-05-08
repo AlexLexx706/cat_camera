@@ -3,4 +3,4 @@ flask-socketio
 gevent
 gevent-websocket
 gunicorn
-opencv-python
+#opencv-python
