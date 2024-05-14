@@ -1,17 +1,18 @@
 import cv2
 import socket
 import time
-
+import get_diff
 server_ip = '127.0.0.1'
 server_port = 9000
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((server_ip, server_port))
 camera = cv2.VideoCapture(0)
-
+diff = get_diff.Diff()
 try:
     while True:
         ret, frame = camera.read()
+        diff.process(frame)
         # frame = cv2.resize(frame, (6, 100))
         _, encoded = cv2.imencode('.jpg', frame)
         encoded = encoded.tobytes()
