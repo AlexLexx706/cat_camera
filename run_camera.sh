@@ -1,2 +1,2 @@
 #!/bin/bash
-./venv/bin/python camera_server.py
+./venv/bin/python cv2_camera_server.py

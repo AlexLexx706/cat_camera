@@ -9,6 +9,7 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((server_ip, server_port))
 camera = cv2.VideoCapture(0)
 diff = get_diff.Diff()
+
 try:
     while True:
         ret, frame = camera.read()
