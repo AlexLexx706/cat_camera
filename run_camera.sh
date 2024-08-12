@@ -1,2 +1,2 @@
 #!/bin/bash
-./venv/bin/python camera_server.py
+./venv/bin/python picamera_server.py

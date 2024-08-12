@@ -32,8 +32,17 @@
     <div id="button-container">
         <button class="button" onclick="sendButtonClick('left')">Left</button>
         <button class="button" onclick="sendButtonClick('right')">Rigth</button>
-        <button class="button" onclick="sendButtonClick('up')">Rigth</button>
-        <button class="button" onclick="sendButtonClick('down')">Rigth</button>
+        <button class="button" onclick="sendButtonClick('up')">Up</button>
+        <button class="button" onclick="sendButtonClick('down')">Down</button>
+        <button class="button" onclick="sendButtonClick('remove')">Remove All files</button>
     </div>
+    <h1>Available Videos:</h1>
+    <ul>
+        {% for video in videos %}
+            <li>
+                <a href="{{ url_for('static', filename='videos/' + video) }}">{{ video }}</a>
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
