@@ -8,6 +8,7 @@ from flask import Flask
 from flask_socketio import SocketIO
 import config
 import servo_controller as sc
+import protocol
 
 os.makedirs(config.VIDEO_FILES_DIR, exist_ok=True)
 
@@ -15,7 +16,8 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 collector = types.SimpleNamespace(frame=None, condition=event.Event())
 servo_controller = sc.ServoController()
-
+robot_protocol = protocol.Protocol()
+robot_protocol.start()
 
 def handle(socket, _address):
     while True:
@@ -42,13 +44,15 @@ def generate_frames():
 
 @app.route('/')
 def index():
-    files = [os.path.join(config.VIDEO_FILES_DIR, name) for name in os.listdir(config.VIDEO_FILES_DIR)]
+    files = [os.path.join(config.VIDEO_FILES_DIR, name)
+             for name in os.listdir(config.VIDEO_FILES_DIR)]
     videos = sorted(filter(os.path.isfile, files), key=os.path.getmtime)
     return render_template('index.html', videos=[os.path.split(path)[1] for path in videos])
 
     # videos = os.listdir(config.VIDEO_FILES_DIR)
     # videos = [video for video in videos if video.endswith('.mp4')]
     # return render_template('index.html', videos=videos)
+
 
 @app.route('/index.html')
 def index_2():
@@ -73,13 +77,30 @@ def handle_button_click(data):
     elif button_id == 'down':
         servo_controller.move_down()
     elif button_id == 'left':
-        servo_controller.move_left()
+        # servo_controller.move_left()
+        cur_pos = int(robot_protocol.send_cmd('print,/stepper_motor_controller/current_position'))
+        robot_protocol.send_cmd(f'set,/stepper_motor_controller/move,{cur_pos - 50}')
     elif button_id == 'right':
-        servo_controller.move_right()
+        # servo_controller.move_right()
+        cur_pos = int(robot_protocol.send_cmd('print,/stepper_motor_controller/current_position'))
+        robot_protocol.send_cmd(f'set,/stepper_motor_controller/move,{cur_pos + 50}')
+
     # remove all video files
     elif button_id == 'remove':
         for name in os.listdir(config.VIDEO_FILES_DIR):
             os.remove(os.path.join(config.VIDEO_FILES_DIR, name))
+    elif button_id == 'car_left_turn':
+        heading = float(robot_protocol.send_cmd('print,/imu/heading'))
+        robot_protocol.send_cmd(f'set,/controller/yaw_spg/target,{heading + 30}')
+    elif button_id == 'car_right_turn':
+        heading = float(robot_protocol.send_cmd('print,/imu/heading'))
+        robot_protocol.send_cmd(f'set,/controller/yaw_spg/target,{heading - 30}')
+    elif button_id == 'car_move_forward':
+        pos = float(robot_protocol.send_cmd('print,/controller/pos'))
+        robot_protocol.send_cmd(f'set,/controller/spg/target,{pos + 0.2}')
+    elif button_id == 'car_move_backward':
+        pos = float(robot_protocol.send_cmd('print,/controller/pos'))
+        robot_protocol.send_cmd(f'set,/controller/spg/target,{pos - 0.2}')
 
 
 if __name__ == '__main__':

@@ -39,7 +39,7 @@ class CameraServer:
                 if time.time() - start_time >= self.MAX_TRY_CONNECT_TIME:
                     raise e
                 else:
-                    LOG.warn(e)
+                    LOG.warning(e)
                     time.sleep(1)
 
         self._diff = get_diff.Diff()
